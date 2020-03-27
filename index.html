@@ -1,0 +1,92 @@
+<!DOCTYPE html > 
+<html>
+<head>
+ <title>text</title>
+ <script type="text/javascript">
+window.onload = function () {  //window.onload() 方法用于在网页加载完毕后立刻执行的操作，即当 HTML 文档加载完毕后，立刻执行某个方法。
+    C = Math.cos; // 缓存数据对象
+    S = Math.sin;
+    U = 0;
+    w = window;
+    j = document;
+	
+    d = j.getElementById("c"); //getElementById() 方法可返回对拥有指定 ID 的第一个对象的引用。
+    c = d.getContext("2d"); //"2d"，它指定了二维绘图,getContext() 方法返回一个用于在画布上绘图的环境。
+	
+    W = d.width = w.innerWidth;  //innerwidth 返回窗口的文档显示区的宽度。
+    H = d.height = w.innerHeight; //innerheight 返回窗口的文档显示区的高度。
+	
+    c.fillRect(0, 0, W, H); // 调整<canvas>画布大小并绘制黑色矩形（默认）
+    c.globalCompositeOperation = "lighter"; // 切换到加色效应，显示源图像 + 目标图像。
+    c.lineWidth = 0.2;  //lineWidth 属性设置或返回当前线条的宽度，以像素计。
+    c.lineCap = "round";  //lineCap 属性设置或返回线条末端线帽的样式。"round"会使线条略微变长。
+	
+    var bool = 0, t = 0; // theta
+	
+    d.onmousemove = function (e) {
+        if(window.T) {
+            if(D==9) { D=Math.random()*20; f(1); }
+            clearTimeout(T);
+        }
+        X = e.pageX; // 抓取鼠标像素位置
+        Y = e.pageY;
+        a=0; // 当前像素的x坐标
+        b=0; // 当前像素的y坐标 
+        A = X, // 原始像素的x坐标
+        B = Y; // 原始像素的y坐标
+        R=(e.pageX/W * 999>>0)/999;
+        r=(e.pageY/H * 999>>0)/999;
+        U=e.pageX/H * 360 >>0;
+        D=9;
+        g = 360 * Math.PI / 180;
+        T = setInterval(f = function (e) { // 开始循环频谱	
+            c.save();
+            c.globalCompositeOperation = "source-over"; // 切换到加色效应
+            if(e!=1) {
+                c.fillStyle = "rgba(0,0,0,0.02)";
+                c.fillRect(0, 0, W, H); // 调整<canvas>画布大小并绘制黑色矩形（默认）
+            }
+            c.restore();
+            i = 25; while(i --) {
+                c.beginPath();
+                if(D > 450 || bool) { // 减小直径
+                    if(!bool) { // has hit maximum已达到最高
+                        bool = 1;
+                    }
+                    if(D < 0.1) { // has hit minimum已达到最低
+                        bool = 0;
+                    }
+                    t -= g; // decrease theta减小theta
+                    D -= 0.1; // decrease size减小尺寸
+                }
+                if(!bool) {
+                    t += g; // increase theta增加theta
+                    D += 0.1; // increase size增加尺寸
+                }
+                q = (R / r - 1) * t; // create hypotrochoid from current mouse position, and setup variables (see: http://en.wikipedia.org/wiki/Hypotrochoid)
+                x = (R - r) * C(t) + D * C(q) + (A + (X - A) * (i / 25)) + (r - R); // center on xy coords以xy坐标为中心
+                y = (R - r) * S(t) - D * S(q) + (B + (Y - B) * (i / 25));
+                if (a) { // draw once two points are set设置两点后绘制
+                    c.moveTo(a, b);
+                    c.lineTo(x, y)
+                }
+                c.strokeStyle = "hsla(" + (U % 360) + ",100%,50%,0.75)"; // draw rainbow hypotrochoid画彩虹下摆线
+                c.stroke();
+                a = x; // set previous coord.x设置先前像素的x坐标
+                b = y; // set previous coord.y设置先前像素的y坐标
+            }
+            U -= 0.5; // increment hue增量色相
+            A = X; // set original coord.x设置原始像素x坐标
+            B = Y; // set original coord.y设置原始像素y坐标
+        }, 16);
+    }
+    j.onkeydown = function(e) { a=b=0; R += 0.05 }
+    d.onmousemove({pageX:300, pageY:290})
+}
+ 
+</script>
+</head>
+<body>
+<canvas id="c"></canvas>
+</body>
+</html>
